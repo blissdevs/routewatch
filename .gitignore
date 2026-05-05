@@ -1,0 +1,10 @@
+node_modules/
+*.log
+.idea/
+.env.local
+npm-debug.log*
+Desktop.ini
+*.js.map
+out/
+.next/
+coverage/
