@@ -70,4 +70,14 @@ describe('createLogger', () => {
     const logger = createLogger({ logDir });
     expect(logger.logFile).toMatch(/session-\d+\.jsonl$/);
   });
+
+  it('persists entries to disk in JSONL format', () => {
+    const logger = createLogger({ logDir });
+    logger.log(sampleEntry({ id: 'disk-check' }));
+    const raw = fs.readFileSync(logger.logFile, 'utf-8').trim();
+    const lines = raw.split('\n');
+    expect(lines).toHaveLength(1);
+    const parsed = JSON.parse(lines[0]);
+    expect(parsed.id).toBe('disk-check');
+  });
 });
