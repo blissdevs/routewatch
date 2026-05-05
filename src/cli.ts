@@ -30,6 +30,22 @@ Example:
 `);
 }
 
+/**
+ * Validates that the provided target string is a well-formed HTTP or HTTPS URL.
+ * Exits the process with an error message if validation fails.
+ */
+function validateTarget(target: string): void {
+  try {
+    const url = new URL(target);
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      throw new Error("unsupported protocol");
+    }
+  } catch {
+    console.error(`[routewatch] Error: invalid target URL "${target}" (must be http or https)`);
+    process.exit(1);
+  }
+}
+
 function main() {
   const args = parseArgs(process.argv);
 
@@ -47,6 +63,8 @@ function main() {
     console.error(`[routewatch] Error: invalid port "${args["port"]}"`); 
     process.exit(1);
   }
+
+  validateTarget(target);
 
   const proxy = createProxy({ target, port, logDir });
 
