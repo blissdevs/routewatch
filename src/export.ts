@@ -15,12 +15,11 @@ export function entryToCurl(entry: LogEntry): string {
     const body = typeof entry.request.body === 'string'
       ? entry.request.body
       : JSON.stringify(entry.request.body);
-    parts.push(`  -d '${body.replace(/'/g, "'\''")}'`);
+    parts.push(`  -d '${body.replace(/'/g, "'\\''")}' `);
   }
 
   parts.push(`  '${url}'`);
-  return parts.join(' \\
-');
+  return parts.join(' \\\n');
 }
 
 export function entriesToHar(entries: LogEntry[]): object {
@@ -61,6 +60,20 @@ export function entriesToHar(entries: LogEntry[]): object {
       })),
     },
   };
+}
+
+/**
+ * Returns the appropriate file extension for a given export format.
+ * Useful when saving exported content to disk.
+ */
+export function getFileExtension(format: ExportFormat): string {
+  switch (format) {
+    case 'json': return '.json';
+    case 'curl': return '.sh';
+    case 'har': return '.har';
+    default:
+      throw new Error(`Unknown export format: ${format}`);
+  }
 }
 
 export function exportEntries(entries: LogEntry[], format: ExportFormat): string {
