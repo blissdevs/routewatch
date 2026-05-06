@@ -69,6 +69,12 @@ describe("entryFingerprint", () => {
     const b = makeEntry({ headers: { date: "Tue" } });
     expect(entryFingerprint(a)).toBe(entryFingerprint(b));
   });
+
+  it("differs for different URLs", () => {
+    const a = makeEntry({ url: "http://localhost:3000/api/users" });
+    const b = makeEntry({ url: "http://localhost:3000/api/posts" });
+    expect(entryFingerprint(a)).not.toBe(entryFingerprint(b));
+  });
 });
 
 describe("dedupeEntries", () => {
@@ -95,17 +101,21 @@ describe("findDuplicates", () => {
   it("groups duplicate entries by fingerprint", () => {
     const a = makeEntry();
     const b = { ...a, id: "dup1" };
-    const c = { ...a, id: "dup2" };
-    const unique = makeEntry({ method: "DELETE" });
-    const result = findDuplicates([a, b, c, unique]);
-    expect(result.size).toBe(1);
-    const [group] = result.values();
-    expect(group).toHaveLength(3);
+    const result = findDuplicates([a, b]);
+    const groups = Object.values(result);
+    expect(groups).toHaveLength(1);
+    expect(groups[0]).toHaveLength(2);
+    expect(groups[0].map((e) => e.id)).toContain(a.id);
+    expect(groups[0].map((e) => e.id)).toContain("dup1");
   });
 
-  it("returns empty map when no duplicates", () => {
+  it("returns empty object when no duplicates exist", () => {
     const a = makeEntry({ method: "GET" });
     const b = makeEntry({ method: "POST" });
-    expect(findDuplicates([a, b]).size).toBe(0);
+    expect(findDuplicates([a, b])).toEqual({});
+  });
+
+  it("returns empty object for empty input", () => {
+    expect(findDuplicates([])).toEqual({});
   });
 });
