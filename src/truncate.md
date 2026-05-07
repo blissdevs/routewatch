@@ -38,6 +38,14 @@ Returns a **shallow copy** of a log entry with `requestBody` and `responseBody` 
 const display = truncateEntry(entry, { maxLength: 256 });
 ```
 
+### `truncateEntries(entries, options)`
+
+Convenience wrapper that applies `truncateEntry` to an array of log entries. Returns a new array; the original entries are not mutated.
+
+```ts
+const displayEntries = truncateEntries(entries, { maxLength: 256 });
+```
+
 ## Default Options
 
 | Option      | Default              |
@@ -47,4 +55,4 @@ const display = truncateEntry(entry, { maxLength: 256 });
 
 ## Integration
 
-The `truncateEntry` helper is designed to wrap entries before passing them to `printSummary` or any terminal output function, keeping the stored log entries intact.
+The `truncateEntry` and `truncateEntries` helpers are designed to wrap entries before passing them to `printSummary` or any terminal output function, keeping the stored log entries intact.
