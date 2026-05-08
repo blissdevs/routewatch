@@ -36,6 +36,17 @@ Returns a human-readable summary line for a retry result.
 
 Prints the formatted result to stdout.
 
+### `retryAll(entries, options?): Promise<RetryResult[]>`
+
+Replays an array of `LogEntry` values in sequence, returning a result for each.
+Useful for processing an entire log file in one call.
+
+```ts
+const results = await retryAll(entries, { maxAttempts: 5, delayMs: 200 });
+const failures = results.filter(r => !r.success);
+console.log(`${failures.length} of ${results.length} entries failed.`);
+```
+
 ## Example
 
 ```ts
