@@ -40,6 +40,12 @@ describe("createSnapshot", () => {
     expect(snap.id).toMatch(/^snap_/);
     expect(snap.createdAt).toBeTruthy();
   });
+
+  it("creates a snapshot with an empty entries array", () => {
+    const snap = createSnapshot("empty", []);
+    expect(snap.entries).toHaveLength(0);
+    expect(snap.label).toBe("empty");
+  });
 });
 
 describe("saveSnapshot / loadSnapshot", () => {
@@ -58,6 +64,18 @@ describe("saveSnapshot / loadSnapshot", () => {
     const snap = createSnapshot("nested", []);
     saveSnapshot(dir, snap);
     expect(fs.existsSync(dir)).toBe(true);
+  });
+
+  it("preserves all entry fields after round-trip", () => {
+    const dir = makeTempDir();
+    const entry = makeEntry({ id: "e-42", status: 404, duration: 99 });
+    const snap = createSnapshot("fields", [entry]);
+    const filepath = saveSnapshot(dir, snap);
+    const loaded = loadSnapshot(filepath);
+    const loadedEntry = loaded.entries[0];
+    expect(loadedEntry.id).toBe("e-42");
+    expect(loadedEntry.status).toBe(404);
+    expect(loadedEntry.duration).toBe(99);
   });
 });
 
