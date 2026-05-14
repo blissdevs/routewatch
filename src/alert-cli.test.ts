@@ -37,6 +37,16 @@ describe('parseAlertArgs', () => {
     const args = parseAlertArgs(['file.log', '--unknown']);
     expect(args.logFile).toBe('file.log');
   });
+
+  it('returns empty rules array when no --rule flags provided', () => {
+    const args = parseAlertArgs(['requests.log', '--severity', 'warn']);
+    expect(args.rules).toEqual([]);
+  });
+
+  it('returns undefined severity when --severity flag is not provided', () => {
+    const args = parseAlertArgs(['requests.log']);
+    expect(args.severity).toBeUndefined();
+  });
 });
 
 describe('printAlertUsage', () => {
